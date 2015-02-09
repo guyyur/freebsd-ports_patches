@@ -1,0 +1,12 @@
+diff -Nudr net/samba41.orig/Makefile net/samba41/Makefile
+--- samba41.orig/Makefile	2015-01-16 15:54:21.000000000 +0200
++++ samba41/Makefile	2015-01-31 14:00:55.000000000 +0200
+@@ -176,6 +176,8 @@
+ .elif ${PORT_OPTIONS:MNSUPDATE}
+ RUN_DEPENDS+=		samba-nsupdate:${PORTSDIR}/dns/samba-nsupdate
+ SUB_LIST+=		NSUPDATE=""
++.else
++SUB_LIST+=		NSUPDATE="@comment "
+ .endif
+ 
+ .if ${PORT_OPTIONS:MDEBUG}

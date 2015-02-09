@@ -1,0 +1,44 @@
+diff -Nudr net/dhcpcd.orig/Makefile net/dhcpcd/Makefile
+--- net/dhcpcd.orig/Makefile	2015-01-31 03:47:30.000000000 +0200
++++ net/dhcpcd/Makefile	2015-01-31 13:47:33.000000000 +0200
+@@ -16,7 +16,7 @@
+ 
+ USES=		tar:bzip2
+ GNU_CONFIGURE=	yes
+-USE_RC_SUBR=	dhcpcd
++USE_RC_SUBR=	dhcpcd dhcpcd_all_ifs
+ 
+ post-install:
+ 	${MV} ${STAGEDIR}${PREFIX}/etc/dhcpcd.conf \
+diff -Nudr net/dhcpcd.orig/files/dhcpcd_all_ifs.in net/dhcpcd/files/dhcpcd_all_ifs.in
+--- net/dhcpcd.orig/files/dhcpcd_all_ifs.in	1970-01-01 02:00:00.000000000 +0200
++++ net/dhcpcd/files/dhcpcd_all_ifs.in	2015-01-31 13:47:33.000000000 +0200
+@@ -0,0 +1,28 @@
++#!/bin/sh
++#
++
++# PROVIDE: dhcpcd_all_ifs
++# REQUIRE: netif
++# BEFORE:  NETWORKING
++# KEYWORD: nojail shutdown
++
++. /etc/rc.subr
++
++# Set some defaults
++dhcpcd_all_ifs_enable=${dhcpcd_all_ifs_enable:-"NO"}
++
++name="dhcpcd_all_ifs"
++rcvar="dhcpcd_all_ifs_enable"
++command="%%PREFIX%%/sbin/dhcpcd"
++start_precmd="dhcpcd_all_ifs_precmd"
++pidfile="/var/run/dhcpcd.pid"
++
++
++dhcpcd_all_ifs_precmd()
++{
++	export PATH=${PATH}:/usr/local/sbin
++}
++
++
++load_rc_config $name
++run_rc_command "$1"

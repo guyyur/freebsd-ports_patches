@@ -1,0 +1,28 @@
+diff -Nudr net/dhcpcd.orig/Makefile net/dhcpcd/Makefile
+--- net/dhcpcd.orig/Makefile	2015-01-31 13:47:30.000000000 +0200
++++ net/dhcpcd/Makefile	2015-01-31 13:54:26.000000000 +0200
+@@ -18,6 +18,12 @@
+ GNU_CONFIGURE=	yes
+ USE_RC_SUBR=	dhcpcd
+ 
++.if !defined(WITHOUT_NIS)
++PLIST_SUB+=	NIS=""
++.else
++PLIST_SUB+=	NIS="@comment "
++.endif
++
+ post-install:
+ 	${MV} ${STAGEDIR}${PREFIX}/etc/dhcpcd.conf \
+ 		${STAGEDIR}${PREFIX}/etc/dhcpcd.conf.sample
+diff -Nudr dhcpcd.orig/pkg-plist dhcpcd/pkg-plist
+--- net/dhcpcd.orig/pkg-plist	2015-01-31 13:47:30.000000000 +0200
++++ net/dhcpcd/pkg-plist	2015-01-31 13:54:42.000000000 +0200
+@@ -8,7 +8,7 @@
+ libexec/dhcpcd-hooks/29-lookup-hostname
+ libexec/dhcpcd-hooks/30-hostname
+ libexec/dhcpcd-hooks/50-ntp.conf
+-libexec/dhcpcd-hooks/50-ypbind
++%%NIS%%libexec/dhcpcd-hooks/50-ypbind
+ libexec/dhcpcd-run-hooks
+ man/man5/dhcpcd.conf.5.gz
+ man/man8/dhcpcd-run-hooks.8.gz

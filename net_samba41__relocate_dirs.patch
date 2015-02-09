@@ -1,0 +1,55 @@
+diff -Nudr net/samba41.orig/Makefile net/samba41/Makefile
+--- net/samba41.orig/Makefile	2015-01-16 15:54:21.000000000 +0200
++++ net/samba41/Makefile	2015-01-31 13:49:38.000000000 +0200
+@@ -30,8 +30,10 @@
+ VARDIR=			${DESTDIR}/var
+ SAMBA4_RUNDIR=		${VARDIR}/run/${SAMBA4_PORTNAME}
+ SAMBA4_LOGDIR=		${VARDIR}/log/${SAMBA4_PORTNAME}
+-SAMBA4_LOCKDIR=		${VARDIR}/db/${SAMBA4_PORTNAME}
+-SAMBA4_PRIVATEDIR=	${SAMBA4_LOCKDIR}/private
++SAMBA4_LOCKDIR=		${VARDIR}/run/${SAMBA4_PORTNAME}
++SAMBA4_STATEDIR=	${VARDIR}/db/${SAMBA4_PORTNAME}
++SAMBA4_CACHEDIR=	${VARDIR}/run/${SAMBA4_PORTNAME}
++SAMBA4_PRIVATEDIR=	${SAMBA4_STATEDIR}/private
+ SAMBA4_LIBDIR=		${PREFIX}/lib
+ SAMBA4_MODULEDIR=	${SAMBA4_LIBDIR}/shared-modules
+ SAMBA4_INCLUDEDIR=	${PREFIX}/include/${SAMBA4_PORTNAME}
+@@ -54,8 +56,8 @@
+ 			--with-sockets-dir="${SAMBA4_RUNDIR}" \
+ 			--with-privileged-socket-dir="${SAMBA4_RUNDIR}" \
+ 			--with-lockdir="${SAMBA4_LOCKDIR}" \
+-			--with-statedir="${SAMBA4_LOCKDIR}" \
+-			--with-cachedir="${SAMBA4_LOCKDIR}" \
++			--with-statedir="${SAMBA4_STATEDIR}" \
++			--with-cachedir="${SAMBA4_CACHEDIR}" \
+ 			--with-privatedir="${SAMBA4_PRIVATEDIR}" \
+ 			--with-logfilebase="${SAMBA4_LOGDIR}"
+ # Support staging
+@@ -388,6 +390,8 @@
+ 			SAMBA4_RUNDIR="${SAMBA4_RUNDIR}" \
+ 			SAMBA4_LOCKDIR="${SAMBA4_LOCKDIR}" \
+ 			SAMBA4_MODULEDIR="${SAMBA4_MODULEDIR}" \
++			SAMBA4_STATEDIR="${SAMBA4_STATEDIR}" \
++			SAMBA4_CACHEDIR="${SAMBA4_CACHEDIR}" \
+ 			SAMBA4_PRIVATEDIR="${SAMBA4_PRIVATEDIR}" \
+ 			SAMBA4_CONFDIR="${SAMBA4_CONFDIR}" \
+ 			SAMBA4_CONFIG="${SAMBA4_CONFIG}"
+@@ -546,7 +550,7 @@
+ .	endfor
+ .endif
+ # Run post-install script
+-.for dir in ${SAMBA4_LOGDIR} ${SAMBA4_RUNDIR} ${SAMBA4_LOCKDIR} ${SAMBA4_MODULEDIR} ${SAMBA4_PRIVATEDIR}
++.for dir in ${SAMBA4_LOGDIR} ${SAMBA4_RUNDIR} ${SAMBA4_LOCKDIR} ${SAMBA4_MODULEDIR} ${SAMBA4_STATEDIR} ${SAMBA4_CACHEDIR} ${SAMBA4_PRIVATEDIR}
+ 			@${MKDIR} "${STAGEDIR}${dir}"
+ .endfor
+ .for dir in auth bind9 gensec gpext idmap ldb nss_info pdb perfcount process_model service vfs
+diff -Nudr net/samba41.orig/files/samba_server.in net/samba41/files/samba_server.in
+--- net/samba41.orig/files/samba_server.in	2014-06-23 21:47:48.000000000 +0300
++++ net/samba41/files/samba_server.in	2015-01-31 13:51:30.000000000 +0200
+@@ -196,6 +196,5 @@
+ winbindd_flags=${winbindd_flags="--daemon"}
+ # Requirements
+ required_files="${samba_server_config}"
+-required_dirs="${samba_server_lockdir}"
+ 
+ run_rc_command "$1"
