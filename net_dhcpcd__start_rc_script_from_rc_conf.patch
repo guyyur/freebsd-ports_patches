@@ -1,0 +1,23 @@
+diff -Naur net/dhcpcd.orig/files/dhcpcd.in net/dhcpcd/files/dhcpcd.in
+--- net/dhcpcd.orig/files/dhcpcd.in	2016-04-16 15:21:38.000000000 +0300
++++ net/dhcpcd/files/dhcpcd.in	2017-07-05 20:55:47.294774000 +0300
+@@ -1,7 +1,9 @@
+ #!/bin/sh
+ 
+-# PROVIDE: dhclient
+-# KEYWORD: nojail nostart
++# PROVIDE: dhcpcd
++# REQUIRE: netif
++# BEFORE:  NETWORKING
++# KEYWORD: nojail shutdown
+ #
+ 
+ . /etc/rc.subr
+@@ -19,6 +21,7 @@
+ 	pidfile="/var/run/dhcpcd-$ifn.pid"
+ else
+ 	pidfile="$($command -P $rc_flags)"
++	rcvar="dhcpcd_enable"
+ fi
+ start_precmd="dhcpcd_precmd"
+ 
